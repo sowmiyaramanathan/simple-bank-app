@@ -1,13 +1,13 @@
 # build stage
-FROM golang:1.24.0-alpine3.21 AS builder
+FROM golang:1.26.4-alpine3.23 AS builder
 WORKDIR /app
 COPY . .
 RUN go build -o main main.go
 RUN apk add curl
-RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.18.2/migrate.linux-amd64.tar.gz | tar xvz
+RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.19.1/migrate.linux-amd64.tar.gz | tar xvz
 
 # run stage
-FROM alpine:3.21
+FROM alpine:3.23
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=builder /app/migrate ./migrate

@@ -2,12 +2,11 @@ name: run unit tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
   test:
     name: test
     runs-on: ubuntu-latest
@@ -26,31 +25,31 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.24.0'
-      id: go
-    
-    - name: Install golang-migrate CLI
-      run: |
-       curl -L https://github.com/golang-migrate/migrate/releases/download/v4.18.2/migrate.linux-amd64.tar.gz | tar xvz
-       sudo mv  migrate /usr/bin/migrate
-       which migrate
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.25.6"
+        id: go
 
-    - name: Run migrations
-      run: make migrateup
-    
-    - name: Create env file
-      run: |
-       echo "DB_DRIVER=postgres" >> app.env
-       echo "DB_SOURCE=postgresql://postgres:secret@localhost:5433/simple_bank?sslmode=disable" >> app.env
-       echo "SERVER_ADDRESS=0.0.0.0:8080" >> app.env
-       echo "TOKEN_SYMMETRIC_KEY=supersecretkey123456789012345678" >> app.env
-       echo "ACCESS_TOKEN_DURATION=15m" >> app.env
-    
-    - name: Test
-      run: make test
+      - name: Install golang-migrate CLI
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.19.1/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv  migrate /usr/bin/migrate
+          which migrate
+
+      - name: Run migrations
+        run: make migrateup
+
+      - name: Create env file
+        run: |
+          echo "DB_DRIVER=postgres" >> app.env
+          echo "DB_SOURCE=postgresql://postgres:secret@localhost:5433/simple_bank?sslmode=disable" >> app.env
+          echo "SERVER_ADDRESS=0.0.0.0:8080" >> app.env
+          echo "TOKEN_SYMMETRIC_KEY=supersecretkey123456789012345678" >> app.env
+          echo "ACCESS_TOKEN_DURATION=15m" >> app.env
+
+      - name: Test
+        run: make test
