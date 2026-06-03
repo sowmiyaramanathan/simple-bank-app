@@ -1,6 +1,6 @@
 module github.com/sowmiyaramanathan/A-simple-bank-app-using-Golang
 
-go 1.24.0
+go 1.25.6
 
 require (
 	github.com/go-playground/validator/v10 v10.20.0
