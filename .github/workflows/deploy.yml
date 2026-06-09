@@ -23,7 +23,20 @@ jobs:
           aws-region: ap-south-1
 
       - name: Load secrets and save to app.env
-        run: aws secretsmanager get-secret-value --secret-id simple_bank --region ap-south-1 --query SecretString --output text | jq -r 'to_entries | map("\(.key)=\(.value)") | .[]' > app.env
+        run: |
+          # 1. Fetch raw secret directly to a temporary file
+          aws secretsmanager get-secret-value --secret-id simple_bank --region ap-south-1 --query SecretString --output text > raw_secret.json
+
+          # 2. Use an updated jq filter pattern to convert JSON keys to ENV lines
+          jq -r 'to_entries | .[] | "\(.key)=\(.value)"' raw_secret.json > app.env
+
+          # 3. Add a check to fail the build if the file is blank
+          if [ ! -s app.env ]; then
+            echo "ERROR: The generated app.env file is completely empty!"
+            echo "Printing raw secret output for debugging:"
+            cat raw_secret.json
+            exit 1
+          fi
 
       - name: Login to Amazon ECR
         id: login-ecr
