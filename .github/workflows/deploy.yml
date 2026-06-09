@@ -16,19 +16,14 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Create env file
-        run: |
-          echo "DB_DRIVER=${{ secrets.DB_DRIVER }}" >> app.env
-          echo "DB_SOURCE=${{ secrets.DB_SOURCE }}" >> app.env
-          echo "SERVER_ADDRESS=${{ secrets.SERVER_ADDRESS }}" >> app.env
-          echo "TOKEN_SYMMETRIC_KEY=${{ secrets.TOKEN_SYMMETRIC_KEY }}" >> app.env
-          echo "ACCESS_TOKEN_DURATION=${{ secrets.ACCESS_TOKEN_DURATION }}" >> app.env
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-south-1
+
+      - name: Load secrets and save to app.env
+        run: aws secretsmanager get-secret-value --secret-id simple_bank --region ap-south-1 --query SecretString --output text | jq -r 'to_entries | map("\(.key)=\(.value)") | .[]' > app.env
 
       - name: Login to Amazon ECR
         id: login-ecr
