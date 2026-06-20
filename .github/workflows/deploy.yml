@@ -61,14 +61,12 @@ jobs:
         run: aws eks update-kubeconfig --name simple-bank --region ap-south-1
 
       - name: Deploy image to Amazon EKS
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
         run: |
-          envsubst < eks/deployment.yaml > eks/deployment_populated.yaml
-          envsubst < eks/issuer.yaml > eks/issuer_populated.yaml
+          sed -i 's|\$REGISTRY|'"${{ steps.login-ecr.outputs.registry }}"'|g' eks/deployment.yaml
 
-          kubectl apply -f eks/deployment_populated.yaml
+          sed -i 's|\$LETSENCRYPT_EMAIL|'"${{ secrets.LETSENCRYPT_EMAIL }}"'|g' eks/issuer.yaml
+
+          kubectl apply -f eks/deployment.yaml
           kubectl apply -f eks/service.yaml
-          kubectl apply -f eks/issuer_populated.yaml
+          kubectl apply -f eks/issuer.yaml
           kubectl apply -f eks/ingress.yaml
