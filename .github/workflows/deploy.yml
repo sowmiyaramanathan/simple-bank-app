@@ -69,6 +69,6 @@ jobs:
           envsubst < eks/issuer.yaml > eks/issuer_populated.yaml
 
           kubectl apply -f eks/deployment_populated.yaml
-          Kubectl apply -f eks/service.yaml
+          kubectl apply -f eks/service.yaml
           kubectl apply -f eks/issuer_populated.yaml
-          Kubectl apply -f eks/ingress.yaml
+          kubectl apply -f eks/ingress.yaml
