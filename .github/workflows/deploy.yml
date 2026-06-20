@@ -65,10 +65,10 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
         run: |
-          envsubst < deployment.yaml > deployment_populated.yaml
-          envsubst < issuer.yaml > issuer_populated.yaml
+          envsubst < eks/deployment.yaml > eks/deployment_populated.yaml
+          envsubst < eks/issuer.yaml > eks/issuer_populated.yaml
 
-          kubectl apply -f deployment_populated.yaml
-          Kubectl apply -f service.yaml
-          kubectl apply -f issuer_populated.yaml
-          Kubectl apply -f ingress.yaml
+          kubectl apply -f eks/deployment_populated.yaml
+          Kubectl apply -f eks/service.yaml
+          kubectl apply -f eks/issuer_populated.yaml
+          Kubectl apply -f eks/ingress.yaml
