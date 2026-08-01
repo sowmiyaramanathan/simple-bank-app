@@ -59,13 +59,6 @@ jobs:
 
       - name: Update Kube Config
         run: aws eks update-kubeconfig --name simple-bank-eks --region ap-south-1
-      
-      - name: Install Ingress-Nginx and Cert-Manager Controllers
-        run: |
-          chmod +x eks/install.sh
-          ./eks/install.sh
-          # Give cert-manager pods 30 seconds to wake up and register the CRDs
-          sleep 30 
 
       - name: Deploy image to Amazon EKS
         run: |
