@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"net"
 	"net/http"
@@ -63,8 +64,11 @@ func main() {
 
 	store := db.NewStore(connPool)
 
-	redisOpt := asynq.RedisClientOpt{
-		Addr: config.RedisAddress,
+	redisOpt := asynq.RedisClusterClientOpt{
+		Addrs: []string{config.RedisAddress},
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 	}
 
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
@@ -203,7 +207,7 @@ func runGatewayServer(ctx context.Context, waitGroup *errgroup.Group, config uti
 	})
 }
 
-func runTaskProcessor(ctx context.Context, waitGroup *errgroup.Group, config util.Config, redisOpt asynq.RedisClientOpt, store db.Store) {
+func runTaskProcessor(ctx context.Context, waitGroup *errgroup.Group, config util.Config, redisOpt asynq.RedisClusterClientOpt, store db.Store) {
 	mailer := mail.NewGmailSender(config.EmailSenderName, config.EmailSenderAddress, config.EmailSenderPassword)
 	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store, mailer)
 	log.Info().Msg("start task processor")
