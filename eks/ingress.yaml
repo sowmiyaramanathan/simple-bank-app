@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: "simple-bank.ddns.net"
+    - host: "a-simplebank.ddns.net"
       http:
         paths:
           - pathType: Prefix
@@ -19,5 +19,31 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - "simple-bank.ddns.net"
+        - "a-simplebank.ddns.net"
       secretName: simple-bank-api-cert
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-bank-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "g-simplebank.ddns.net"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: simple-bank-api-service
+                port:
+                  number: 90
+  tls:
+    - hosts:
+        - "g-simplebank.ddns.net"
+      secretName: simple-bank-gapi-cert

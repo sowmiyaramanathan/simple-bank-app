@@ -51,23 +51,22 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: simplebank
+          REPOSITORY: simple-bank
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest .
           docker push -a $REGISTRY/$REPOSITORY
 
       - name: Update Kube Config
-        run: aws eks update-kubeconfig --name simple-bank --region ap-south-1
+        run: aws eks update-kubeconfig --name simple-bank-eks --region ap-south-1
 
       - name: Deploy image to Amazon EKS
         run: |
-          # 1. Apply your static configurations normally
+          sed -i 's|\$REGISTRY|'"${{ steps.login-ecr.outputs.registry }}"'|g' eks/deployment.yaml
+
+          sed -i 's|\$LETSENCRYPT_EMAIL|'"${{ secrets.LETSENCRYPT_EMAIL }}"'|g' eks/issuer.yaml
+
           kubectl apply -f eks/deployment.yaml
           kubectl apply -f eks/service.yaml
           kubectl apply -f eks/issuer.yaml
           kubectl apply -f eks/ingress.yaml
-
-          # 2. Force Kubernetes to update the image reference directly using the ECR login output
-          kubectl set image deployment/simple-bank-api-deployment \
-            simple-bank-api=${{ steps.login-ecr.outputs.registry }}/simplebank:latest

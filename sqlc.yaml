@@ -1,12 +1,18 @@
-version: "1"
-packages:
-  - name: "db"
-    path: "./db/sqlc"
+version: "2"
+sql:
+  - schema: "./db/migration/"
     queries: "./db/query/"
-    schema: "./db/migration/"
     engine: "postgresql"
-    emit_prepared_queries: false
-    emit_interface: true #generate querirer interface for the generated package
-    emit_exact_table_names: false
-    emit_json_tags: true # adding json tags to the generated struct
-    emit_empty_slices: true # generate empty slices for empty record returned by :many query
+    gen:
+      go:
+        package: "db"
+        out: "./db/sqlc"
+        emit_interface: true #generate querirer interface for the generated package
+        emit_json_tags: true # adding json tags to the generated struct
+        emit_empty_slices: true # generate empty slices for empty record returned by :many query
+        sql_package: pgx/v5
+        overrides:
+          - db_type: "timestamptz"
+            go_type: "time.Time"
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
