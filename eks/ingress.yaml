@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: "a-simplebank.ddns.net"
+    - host: "api-simplebank.duckdns.org"
       http:
         paths:
           - pathType: Prefix
@@ -19,7 +19,7 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - "a-simplebank.ddns.net"
+        - "api-simplebank.duckdns.org"
       secretName: simple-bank-api-cert
 ---
 apiVersion: networking.k8s.io/v1
@@ -33,7 +33,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: "g-simplebank.ddns.net"
+    - host: "gapi-simplebank.duckdns.org"
       http:
         paths:
           - pathType: Prefix
@@ -45,5 +45,5 @@ spec:
                   number: 90
   tls:
     - hosts:
-        - "g-simplebank.ddns.net"
+        - "gapi-simplebank.duckdns.org"
       secretName: simple-bank-gapi-cert
