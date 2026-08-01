@@ -62,11 +62,12 @@ jobs:
 
       - name: Deploy image to Amazon EKS
         run: |
-          sed -i 's|\$REGISTRY|'"${{ steps.login-ecr.outputs.registry }}"'|g' eks/deployment.yaml
-
-          sed -i 's|\$LETSENCRYPT_EMAIL|'"${{ secrets.LETSENCRYPT_EMAIL }}"'|g' eks/issuer.yaml
-
+          # 1. Apply your static configurations normally
           kubectl apply -f eks/deployment.yaml
           kubectl apply -f eks/service.yaml
           kubectl apply -f eks/issuer.yaml
           kubectl apply -f eks/ingress.yaml
+
+          # 2. Force Kubernetes to update the image reference directly using the ECR login output
+          kubectl set image deployment/simple-bank-api-deployment \
+            simple-bank-api=${{ steps.login-ecr.outputs.registry }}/simplebank:latest
