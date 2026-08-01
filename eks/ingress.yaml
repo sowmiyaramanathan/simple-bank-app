@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: simple-bank-ingress
+  name: simple-bank-http-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
@@ -25,7 +25,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: simple-bank-ingress
+  name: simple-bank-grpc-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
