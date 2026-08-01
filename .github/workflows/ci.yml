@@ -50,6 +50,9 @@ jobs:
           echo "SERVER_ADDRESS=0.0.0.0:8080" >> app.env
           echo "TOKEN_SYMMETRIC_KEY=supersecretkey123456789012345678" >> app.env
           echo "ACCESS_TOKEN_DURATION=15m" >> app.env
+          echo "EMAIL_SENDER_NAME=Simple Bank" >> app.env
+          echo "EMAIL_SENDER_ADDRESS=jayarsoc@gmail.com" >> app.env
+          echo "EMAIL_SENDER_PASSWORD=ohnvqihffckvodgk" >> app.env
 
       - name: Test
         run: make test
