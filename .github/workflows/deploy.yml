@@ -58,8 +58,10 @@ jobs:
           docker push -a $REGISTRY/$REPOSITORY
 
       - name: Update Kube Config
-        run: aws eks update-kubeconfig --name simple-bank-eks --region ap-south-1
+        run: aws eks update-kubeconfig --name simple-bank-eks-v1 --region ap-south-1
 
+      - name: Wait for validation endpoints to sync
+        run: sleep 15
       - name: Deploy image to Amazon EKS
         run: |
           sed -i 's|\$REGISTRY|'"${{ steps.login-ecr.outputs.registry }}"'|g' eks/deployment.yaml
