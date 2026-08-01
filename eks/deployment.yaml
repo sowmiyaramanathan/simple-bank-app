@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: simple-bank-api
-          image: $REPOSITORY/simplebank:latest
+          image: $REGISTRY/simple-bank:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
